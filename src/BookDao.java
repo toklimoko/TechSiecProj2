@@ -1,70 +1,130 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Scanner;
 
 public class BookDao {
 
-    private static final String url = "jdbc:mysql://localhost:3306/library?useSSL=false&serverTimezone=UTC";
-    private static final String username = "user";
-    private static final String password = "admin1";
-    private static Connection connection;
-
-
-    public static void main(String[] args) {
-
-
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(url, username, password);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        Scanner scanner = new Scanner(System.in);
-        String answer = "";
-
-        while (!answer.equals("5")) { //koniec
-
-
-            System.out.println("Wybierz opcję: \n 1 - Dodaj nowy rekord \n 2 - Wyświetl wszystkie książki \n 3 - Usuwanie \n 4 - Aktualizacja \n 5 - Koniec");
-            answer = scanner.nextLine();
-
-            if (answer.equals("1")) { //zapis
-                LibrarySave addBook = new LibrarySave();
-                addBook.add(connection);
-            }
-
-            if (answer.equals("2")) { //odczyt
-                LibraryRead libraryRead = new LibraryRead();
-                libraryRead.read(connection);
-
-            }
-
-            if (answer.equals("3")) { //usuwanie
-                LibraryDelete deleteBook = new LibraryDelete();
-                deleteBook.delete(connection);
-            }
-
-
-            if (answer.equals("4")) { //aktualizacja
-                LibraryUpdate updateBook = new LibraryUpdate();
-                updateBook.update(connection);
-            }
-
-        }
-            close();
+    public BookDao() {
     }
 
-    public static void close() {
+    public void read(Connection connection) {
+
+        Statement statement = null;
+
         try {
-            connection.close();
+            statement = connection.createStatement();
+            String string = "select * from books";
+            ResultSet resultSet = statement.executeQuery(string);
+
+            while(resultSet.next()) {
+                int id = resultSet.getInt("ID");
+                String title = resultSet.getString("TITLE");
+                String author = resultSet.getString("AUTHOR");
+                String year = resultSet.getString("BOOKYEAR");
+                String isbn = resultSet.getString("ISBN");
+
+                System.out.println("ID: " + id + "\n Title: " + title + "\n Author: " + author + "\n Year: " + year + "\n ISBN: " + isbn + "\n");
+            }
         } catch (SQLException e) {
+            System.out.println("Błąd wczytania bazy danych.");
+        }
+    }
+
+    public void add(Connection connection){
+
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Podaj nr id książki:");
+        String id= scan.nextLine();
+        System.out.println("Podaj tytuł:");
+        String title = scan.nextLine();
+        System.out.println("Podaj autora:");
+        String author = scan.nextLine();
+        System.out.println("Podaj rok wydania:");
+        String year =scan.nextLine();
+        System.out.println("Podaj nr ISBN:");
+        String isbn = scan.nextLine();
+
+        Book book = new Book(id, title, author, year, isbn);
+
+        final String string = "insert into books(ID,TITLE,AUTHOR,BOOKYEAR,ISBN) values(?, ?, ?, ?,?)";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(string);
+            preparedStatement.setString(1, book.getId());
+            preparedStatement.setString(2, book.getTytul());
+            preparedStatement.setString(3, book.getAutor());
+            preparedStatement.setString(4, book.getRok());
+            preparedStatement.setString(5, book.getIsbn());
+            preparedStatement.executeUpdate();
+            System.out.println("\n Dodano pozycję. \n");
+        } catch (SQLException e) {
+            System.out.println("Nie dodano pozycji.");
             e.printStackTrace();
         }
 
     }
+
+    public void delete(Connection connection) {
+
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Podaj id książki, którą chcesz usunąć: ");
+        String id = scan.nextLine();
+
+        Book book = new Book(id);
+
+        final String string = "delete from books where ID = ?";
+
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(string);
+            preparedStatement.setString(1, book.getId());
+            preparedStatement.executeUpdate();
+
+            System.out.println("\n Usunięto pozycję. \n");
+
+        } catch (SQLException e) {
+            System.out.println("Nie można uzunąć pozycji.");
+        }
+    }
+
+    public void update(Connection connection) {
+
+
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Podaj nr id książki:");
+        String id = scan.nextLine();
+        System.out.println("Podaj tytuł:");
+        String title = scan.nextLine();
+        System.out.println("Podaj autora:");
+        String author = scan.nextLine();
+        System.out.println("Podaj rok wydania:");
+        String year = scan.nextLine();
+        System.out.println("Podaj nr ISBN: ");
+        String isbn = scan.nextLine();
+
+        Book book = new Book(id, title, author, year, isbn);
+
+        final String string = "update books set TITLE=?, AUTHOR=?, BOOKYEAR=?, ISBN=? where ID = ?";
+
+        try {
+            PreparedStatement prepStmt = connection.prepareStatement(string);
+            prepStmt.setString(1, title);
+            prepStmt.setString(2, author);
+            prepStmt.setInt(3, Integer.valueOf(book.getRok()));
+            prepStmt.setString(4, isbn);
+            prepStmt.setString(5, id);
+            prepStmt.executeUpdate();
+
+            System.out.println("\n Zakualizowano pozycję \n");
+
+        } catch (SQLException e) {
+            System.out.println("Nie zaktualizowano pozycji");
+        }
+
+    }
+
+
+
+
+
+
+
 }
