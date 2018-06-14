@@ -7,7 +7,7 @@ public class BookDao {
 
     private static final String url = "jdbc:mysql://localhost:3306/library?useSSL=false&serverTimezone=UTC";
     private static final String username = "user";
-    private static final String password = "root";
+    private static final String password = "admin1";
     private static Connection connection;
 
 

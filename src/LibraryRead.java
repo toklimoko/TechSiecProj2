@@ -18,7 +18,7 @@ public class LibraryRead {
                 int id = resultSet.getInt("ID");
                 String title = resultSet.getString("TITLE");
                 String author = resultSet.getString("AUTHOR");
-                String year = resultSet.getString("YEAR");
+                String year = resultSet.getString("BOOKYEAR");
                 String isbn = resultSet.getString("ISBN");
 
                 System.out.println("ID: " + id + "\n Title: " + title + "\n Author: " + author + "\n Year: " + year + "\n ISBN: " + isbn + "\n");

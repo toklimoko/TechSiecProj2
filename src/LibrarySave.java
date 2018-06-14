@@ -19,7 +19,7 @@ public class LibrarySave {
         System.out.println("Podaj nr ISBN:");
         String isbn = scan.nextLine();
 
-        final String string = "insert into books(id,title,author,bookYear,isbn) values(?, ?, ?, ?,?)";
+        final String string = "insert into books(ID,TITLE,AUTHOR,BOOKYEAR,ISBN) values(?, ?, ?, ?,?)";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(string);

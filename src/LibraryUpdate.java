@@ -20,7 +20,7 @@ public class LibraryUpdate {
         System.out.println("Podaj nr ISBN: ");
         String isbn = scan.nextLine();
 
-        final String string = "update books set title=?, author=?, bookYear=?, isbn=? where id = ?";
+        final String string = "update books set TITLE=?, AUTHOR=?, BOOKYEAR=?, ISBN=? where ID = ?";
 
         try {
             PreparedStatement prepStmt = connection.prepareStatement(string);

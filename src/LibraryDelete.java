@@ -11,7 +11,7 @@ public class LibraryDelete {
         System.out.println("Podaj id książki, którą chcesz usunąć: ");
         String id = scan.nextLine();
 
-        final String string = "delete from books where id = ?";
+        final String string = "delete from books where ID = ?";
 
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(string);
